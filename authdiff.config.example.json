@@ -1,0 +1,56 @@
+{
+  "_comment": "AuthDiff example config. Replace tokens/URLs with your AUTHORIZED target. Two identities minimum (different owners/tenants).",
+
+  "scope": {
+    "allow_hosts": ["localhost", "127.0.0.1", "*.your-authorized-target.com"],
+    "rate_per_sec": 5,
+    "burst": 5,
+    "max_concurrency": 8
+  },
+
+  "identities": [
+    {
+      "id": "alice",
+      "tenant": "tenant-A",
+      "role": "user",
+      "headers": { "Authorization": "Bearer ALICE_JWT_HERE" }
+    },
+    {
+      "id": "bob",
+      "tenant": "tenant-B",
+      "role": "user",
+      "headers": { "Authorization": "Bearer BOB_JWT_HERE" }
+    }
+  ],
+
+  "seed": {
+    "method": "PUT",
+    "url_template": "https://api.your-authorized-target.com/users/me/profile",
+    "headers": {},
+    "body_template": "{\"bio\": \"{canary}\"}"
+  },
+
+  "observed": [
+    {
+      "owner": "alice",
+      "method": "GET",
+      "url": "https://api.your-authorized-target.com/users/me/profile"
+    },
+    {
+      "owner": "alice",
+      "method": "GET",
+      "url": "https://api.your-authorized-target.com/orders/1001"
+    }
+  ],
+
+  "race": {
+    "n": 20,
+    "seeded_capacity": 1,
+    "request": {
+      "method": "POST",
+      "url": "https://api.your-authorized-target.com/coupons/redeem",
+      "headers": { "Authorization": "Bearer ALICE_JWT_HERE" },
+      "body": "{\"code\":\"SINGLE_USE_CANARY_CODE\"}"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+# AuthDiff local state — NEVER commit the HMAC secret
+.authdiff_secret
+
+# Captured traffic / local configs may contain tokens
+*.har
+config.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
