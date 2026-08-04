@@ -1,0 +1,32 @@
+# AuthDiff local state / secrets — never commit
+.authdiff_state.json
+.authdiff_secret
+.authdiff.kill
+
+# captures / local configs may contain tokens
+*.har
+config.json
+config.yaml
+config.yml
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.env
+
+# tooling caches
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

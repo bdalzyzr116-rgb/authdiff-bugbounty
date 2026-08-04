@@ -1,0 +1,12 @@
+site_name: AuthDiff
+site_description: Differential authorization testing framework
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+nav:
+  - Home: index.md
+  - Architecture: architecture.md
+  - Configuration: configuration.md
+  - FAQ: faq.md

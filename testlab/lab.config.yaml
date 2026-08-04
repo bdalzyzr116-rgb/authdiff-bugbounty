@@ -1,0 +1,36 @@
+# AuthDiff config for the local vulnerable lab (testlab/app.py).
+scope:
+  allow_hosts: ["127.0.0.1", "localhost"]
+  rate_per_sec: 50
+  burst: 20
+  allow_writes: true          # the lab is disposable and local
+
+identities:
+  - id: alice
+    role: user
+    headers: { Authorization: "Bearer alice-token" }
+  - id: bob
+    role: user
+    headers: { Authorization: "Bearer bob-token" }
+
+seed:
+  method: PUT
+  url_template: "http://127.0.0.1:5000/api/profile"
+  body_template: '{"bio": "{canary}"}'
+
+observed:
+  - owner: alice
+    method: GET
+    url: "http://127.0.0.1:5000/api/profile/alice"
+  - owner: bob
+    method: GET
+    url: "http://127.0.0.1:5000/api/profile/bob"
+
+race:
+  n: 10
+  seeded_capacity: 1
+  request:
+    method: POST
+    url: "http://127.0.0.1:5000/api/coupon/redeem"
+    headers: { Authorization: "Bearer alice-token" }
+    body: "{}"

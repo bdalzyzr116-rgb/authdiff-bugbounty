@@ -1,0 +1,7 @@
+services:
+  testlab:
+    build: ./testlab
+    ports:
+      - "5000:5000"
+    # Bind to localhost only — this app is intentionally vulnerable.
+    command: python app.py

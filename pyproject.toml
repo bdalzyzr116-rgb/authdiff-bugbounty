@@ -1,0 +1,77 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "authdiff"
+version = "2.0.0"
+description = "Differential authorization testing framework (BOLA/IDOR, BFLA, mass-assignment, race) with deterministic canary oracles."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Abdoalrhman abdalaziz" }]
+keywords = ["security", "bug-bounty", "bola", "idor", "bfla", "authorization", "dast", "appsec"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Security",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+    "httpx[http2]>=0.27",
+    "h2>=4.1",
+    "typer>=0.12",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+http3 = ["aioquic>=1.0"]
+web = ["fastapi>=0.110", "uvicorn>=0.29"]
+fast = ["ijson>=3.2"]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "pytest-httpx>=0.30",
+    "coverage>=7.4",
+    "mypy>=1.10",
+    "ruff>=0.5",
+    "bandit>=1.7",
+]
+
+[project.scripts]
+authdiff = "authdiff.cli.main:app"
+
+[project.urls]
+Homepage = "https://github.com/bdalzyzr116-rgb/authdiff-bugbounty"
+Repository = "https://github.com/bdalzyzr116-rgb/authdiff-bugbounty"
+
+[tool.hatch.build.targets.wheel]
+packages = ["authdiff"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S", "A", "C4"]
+ignore = ["S101"]  # asserts are fine in tests and invariants
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S", "B"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_ignores = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+addopts = "-q"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["authdiff"]
+branch = true

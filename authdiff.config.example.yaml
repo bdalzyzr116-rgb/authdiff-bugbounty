@@ -1,0 +1,52 @@
+# AuthDiff v2 example configuration (YAML).
+# Tokens are read from environment variables via ${VAR} — never commit secrets.
+
+scope:
+  allow_hosts:
+    - "localhost"
+    - "127.0.0.1"
+    - "*.your-authorized-target.com"
+  allow_cidrs: []          # optional IP/CIDR allowlist (DNS is pinned once resolved)
+  rate_per_sec: 5
+  burst: 5
+  max_concurrency: 8
+  allow_writes: false      # non-destructive by default
+  kill_switch_file: ".authdiff.kill"
+
+identities:
+  - id: alice
+    tenant: tenant-A
+    role: user
+    headers:
+      Authorization: "Bearer ${ALICE_TOKEN}"
+  - id: bob
+    tenant: tenant-B
+    role: user
+    headers:
+      Authorization: "Bearer ${BOB_TOKEN}"
+
+# Either list requests inline, or feed captures via: --input alice=alice.har
+observed:
+  - owner: alice
+    method: GET
+    url: "https://api.your-authorized-target.com/users/me/profile"
+  - owner: alice
+    method: GET
+    url: "https://api.your-authorized-target.com/orders/1001"
+
+# Optional: seed canaries into each identity's own private field.
+seed:
+  method: PUT
+  url_template: "https://api.your-authorized-target.com/users/me/profile"
+  body_template: '{"bio": "{canary}"}'
+
+# Optional: single-packet race confirmation on a single-use resource.
+race:
+  n: 20
+  seeded_capacity: 1
+  request:
+    method: POST
+    url: "https://api.your-authorized-target.com/coupons/redeem"
+    headers:
+      Authorization: "Bearer ${ALICE_TOKEN}"
+    body: '{"code": "SINGLE_USE_CANARY"}'

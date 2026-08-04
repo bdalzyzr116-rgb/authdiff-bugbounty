@@ -1,0 +1,15 @@
+.git
+.github
+docs
+tests
+testlab
+**/__pycache__
+*.pyc
+.authdiff_state.json
+.authdiff_secret
+*.har
+config.json
+.venv
+.mypy_cache
+.pytest_cache
+.ruff_cache

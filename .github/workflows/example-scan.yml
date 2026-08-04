@@ -1,0 +1,32 @@
+# Example: gate a deployment on AuthDiff findings and upload SARIF to GitHub.
+name: authdiff-scan (example)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  authdiff:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write   # required to upload SARIF
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install .
+      - name: Run AuthDiff
+        env:
+          ALICE_TOKEN: ${{ secrets.ALICE_TOKEN }}
+          BOB_TOKEN: ${{ secrets.BOB_TOKEN }}
+        run: |
+          authdiff run --config authdiff.config.example.yaml --authorized \
+            --sarif authdiff.sarif || code=$?
+          echo "authdiff exit: ${code:-0}"
+          # exit 1 == findings; fail the job only on findings
+          test "${code:-0}" != "1"
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: authdiff.sarif
